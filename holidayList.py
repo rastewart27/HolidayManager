@@ -27,6 +27,7 @@ import datetime
 from bs4 import BeautifulSoup
 import requests 
 from dataclasses import dataclass
+from config import *
 
 @dataclass
 class Holiday:
@@ -35,6 +36,7 @@ class Holiday:
     
     def __str__ (self):
         return f"{self.name} occurs on {self.date}"
+
 
 class HolidayList:
 
@@ -53,7 +55,6 @@ class HolidayList:
             return False
         if self.findHoliday(holidayObj.name, holidayObj.date)[1] == False:
             self.holidayObjStorage.append(holidayObj)
-        print("You've successfully added a holiday.")
 
     """
     Searches through the list, if the name and the date are the same, return holiday object and True, otherwise, return None and False.
@@ -118,6 +119,42 @@ class HolidayList:
         jsonString = json.dumps(jsonReadyDict, indent = 4)
         with open(fileLocation, 'w') as jsonFile:
             jsonFile.write(jsonString)
+
+    def monthToDigit(self, month):
+        monthToValue = [("Jan", 1), ("Feb", 2), ("Mar", 3), ("Apr", 4), ("May", 5), ("Jun", 6),
+        ("Jul", 7), ("Aug", 8), ("Sep", 9), ("Oct", 10), ("Nov", 11), ("Dec", 12)]
+        for index in range(len(monthToValue)):
+            if month == monthToValue[index][0]:
+                return monthToValue[index][1]
+
+    def scrapeForDates(self):
+        currentYear = datetime.date.today().isocalendar()[0]
+        minYear = currentYear - 2
+        maxYear = currentYear + 3 #because of the exclusivity on range()
+        for year in range(minYear, maxYear):
+            response = requests.get(url + f"{year}")
+            html = response.text
+            soup = BeautifulSoup(html, 'html.parser')
+            table = soup.find('table', attrs = {"id":"holidays-table"})
+            tbody = table.find('tbody')
+            
+            holidayNames = []
+            holidayDates = []
+            #print(tbody.find_all('th')[0].string.split(" "))
+            for date in tbody.find_all('th'):
+                hDate = date.string.split(" ")
+                hDate[0] = self.monthToDigit(hDate[0])
+                hDate = datetime.date(int(year), hDate[0], int(hDate[1]))
+                holidayDates.append(hDate)
+
+            for holiday in tbody.find_all('a'):
+                hName = holiday.string
+                holidayNames.append(hName)
+
+            for iter in range(len(holidayNames)):
+                if not self.findHoliday(holidayNames[iter], holidayDates[iter])[1]:
+                    self.addHoliday(Holiday(holidayNames[iter], holidayDates[iter]))
+
 
     def filterHolidaysByWeek(self, year, weekNumber):
          holidays = list(filter(lambda holidayListed: holidayListed.date.isocalendar()[0] == year and holidayListed.date.isocalendar()[1] == weekNumber,

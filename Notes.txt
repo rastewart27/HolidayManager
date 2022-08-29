@@ -1,0 +1,34 @@
+Order of Attack:
+ main()
+ HolidayList()
+ Holiday()
+ First, step:
+  Allow the json file to work.
+  Once json file works, attack webscraping
+ Things to pay attention to:
+  __init__ in Holiday has no pseudo code
+  maybe we just turn it into a dataclass and don't bother?
+  Week calculation, does datatime have a function for that?
+  Still not super comfy with json importing, but once it's in easy to
+    work with.
+
+
+First Pass before initial github upload:
+ - Initialize object
+ - Load JSON file
+ - menu loop
+ - Display menu -> store text in another file?
+ - user input and error checking .strip().lower()[0] isnumeric() isalpha()
+ 
+Second Pass:
+ - touching up menu functions
+ - testing menu functions
+
+Third Pass:
+ - webscraping
+ - double check date features
+
+Fourth Pass:
+ - Weather API
+ - Test edge cases
+ - Submit.

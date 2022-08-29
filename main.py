@@ -25,7 +25,7 @@ def alphaCheck(inputText):
 
 def addHoliday(holidayListObj):
     print(addHolidayText, end = "")
-    holidayName = input().strip().lower()
+    holidayName = input().strip()
     needProperDate = True
     while needProperDate:
         print("Date: ", end = "")
@@ -33,10 +33,11 @@ def addHoliday(holidayListObj):
         try:
             holidayDate = datetime.date.fromisoformat(holidayDate)
         except:
-            print("Please input your date in the yyyy-mm-dd format.  Thank you.")
+            print("Error:\nPlease input your date in the yyyy-mm-dd format.  Thank you.")
             continue
         needProperDate = False
     holidayListObj.addHoliday(Holiday(holidayName, holidayDate))
+    print(f"Success:\n{holidayName} ({holidayDate}) has been added to the holiday list.")
 
 def rmHoliday(holidayListObj, savesToMake):
     print(removeHolidayText, end = "")
@@ -127,8 +128,9 @@ def exitMenu(savesToMake):
 def main():
     newHolidayList = HolidayList()
     newHolidayList.readJson("holidays.json")
+    newHolidayList.scrapeForDates()
     print(startupText(newHolidayList))
-    #time.sleep(2)
+    time.sleep(2)
     
     stillGoing = True
     savesToMake = False
