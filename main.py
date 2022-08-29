@@ -1,19 +1,20 @@
-"""
-Got annoyed with all the text on the starter code, we're writing this one my way.
-"""
+
 
 
 '''
-Main function for interaction and object creation.
+Contains Main, input checking, and some helper functions
 '''
 from holidayList import *
 from textBlocks import *
 import time
 import datetime
 
+'''
+Both designed for error checking.
+'''
 def numericCheck(inputText):
     if inputText.isnumeric() != True:
-            print("Please enter a number for your selection.")
+            #print("Please enter a number for your selection.")
             return True
     return False
 
@@ -23,6 +24,9 @@ def alphaCheck(inputText):
         return True
     return False
 
+'''
+Light input I/O work and beginning of datastructure method calling
+'''
 def addHoliday(holidayListObj):
     print(addHolidayText, end = "")
     holidayName = input().strip()
@@ -71,7 +75,7 @@ def saveHolidayList(holidayListObj, jsonReadyDict):
             continue
 
         if userIsCrazy == 'y':
-            holidayListObj.saveToJson("holidaysTested.json", jsonReadyDict) #fix file name  ################################################################################################
+            holidayListObj.saveToJson("holidays.json", jsonReadyDict) 
             print(successSave)
             userTryingToSave = False
         elif userIsCrazy == 'n':
@@ -93,15 +97,30 @@ def viewHolidayList(holidayListObj):
     while not viewingHolidayList:
         print("Which week? #[1-52, Leave blank for the current week]: ", end="")
         weekInput = input().strip().lower()
-        if (numericCheck(weekInput) or len(weekInput) >= 3) and weekInput != "":
+        if ((numericCheck(weekInput) or len(weekInput) >= 3) and weekInput != ""):
             print("Please follow instructions and input the week as a number.")
             continue
         viewingHolidayList = True
         
     if weekInput == "":
+        weatherLoops = True
         weekInput = datetime.date.today().isocalendar()[1]
+        while weatherLoops:
+            print("Would you like to see this week's weather? [y/n]:", end="")
+            userInput = input().strip().lower()
+            if (alphaCheck(userInput)):
+                continue
+            if userInput == 'y':
+                addWeather = holidayListObj.getWeather(weekInput, yearInput)
+                print(addWeather)
+                weatherLoops = False
+            else:
+                weatherLoops = False
+    else:
+        holidayListObj.displayHolidaysInWeek(int(yearInput), int(weekInput))
 
-    holidayListObj.displayHolidaysInWeek(int(yearInput), int(weekInput))
+
+    
 
 
 def exitMenu(savesToMake):
@@ -123,7 +142,9 @@ def exitMenu(savesToMake):
         return False
     
 
-
+'''
+main() including the generic menu loop.
+'''
 
 def main():
     newHolidayList = HolidayList()
@@ -159,5 +180,4 @@ def main():
 
 
 if __name__ == "__main__":
-    #I hate passing immediately to main() but I'm not sure if that's a convention or not.
     main()
