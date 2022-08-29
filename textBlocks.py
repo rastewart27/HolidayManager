@@ -21,3 +21,29 @@ addHolidayText = """
 Add a Holiday
 =============
 Holiday: """
+
+removeHolidayText = """
+Remove a Holiday
+================
+Holiday Name: """
+
+saveHolidayText = """
+Saving Holiday List
+====================
+Are you sure you want to save your changes? [y/n]: """
+
+canceledSave = """Canceled:
+Holiday list file save canceled.
+"""
+
+successSave = """Success:
+Your changes have been saved.
+"""
+
+viewFiles = """View Holidays
+=================
+Which year?: """
+
+exitMenuText = """Exit
+=====
+Are you sure you want to exit?"""

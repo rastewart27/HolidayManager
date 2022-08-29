@@ -25,7 +25,7 @@ Json structure:
 import json
 import datetime
 from bs4 import BeautifulSoup
-import requests
+import requests 
 from dataclasses import dataclass
 
 @dataclass
@@ -40,6 +40,12 @@ class HolidayList:
 
     def __init__(self):
         self.holidayObjStorage = []
+
+    def toDict(self):
+        dictionaryStorage = {"holidays": []}
+        for obj in self.holidayObjStorage:
+            dictionaryStorage["holidays"].append({"name": obj.name, "date": str(obj.date)})
+        return dictionaryStorage
 
     def addHoliday(self, holidayObj):
         #check for the type of the holiday object.
@@ -75,9 +81,9 @@ class HolidayList:
 
 
     def removeHoliday(self, holidayName, holidayDate):
-        for holiday in self.holidayObjStorage:
+        for index, holiday in enumerate(self.holidayObjStorage):
             if holidayName == holiday.name and holidayDate == holiday.date:
-                self.holidayObjStorage.pop(holiday)
+                self.holidayObjStorage.pop(index)
         return False
 
     def removeHolidayGeneric(self, holidayInput):
@@ -107,3 +113,19 @@ class HolidayList:
 
     def numHolidays(self):
         return len(self.holidayObjStorage)
+
+    def saveToJson(self, fileLocation, jsonReadyDict):
+        jsonString = json.dumps(jsonReadyDict, indent = 4)
+        with open(fileLocation, 'w') as jsonFile:
+            jsonFile.write(jsonString)
+
+    def filterHolidaysByWeek(self, year, weekNumber):
+         holidays = list(filter(lambda holidayListed: holidayListed.date.isocalendar()[0] == year and holidayListed.date.isocalendar()[1] == weekNumber,
+         self.holidayObjStorage))
+         return holidays
+
+    def displayHolidaysInWeek(self, year, weekNumber):
+        holidaysInWeek = self.filterHolidaysByWeek(year, weekNumber)
+        print(f"\n\nThese are the holidays for {year} week #{weekNumber}:")
+        for holi in holidaysInWeek:
+            print(str(holi))
